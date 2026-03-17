@@ -11,12 +11,12 @@ export class LambdaStack extends cdk.Stack {
     
 
     // Tabla DynamoDB
-    const tabla = new dynamodb.Table(this, 'MiTabla', {
-      tableName: 'mi-tabla',
-      partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
-      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
-      removalPolicy: cdk.RemovalPolicy.DESTROY,
-    });
+    //const tabla = new dynamodb.Table(this, 'MiTabla', {
+    //  tableName: 'mi-tabla',
+    //  partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
+    //  billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+    //  removalPolicy: cdk.RemovalPolicy.DESTROY,
+    //});
 
     // Lambda
     const holaFn = new lambda.Function(this, 'HolaMundoFunction', {
