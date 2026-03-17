@@ -8,6 +8,7 @@ import { Construct } from 'constructs';
 export class LambdaStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
+    
 
     // Tabla DynamoDB
     const tabla = new dynamodb.Table(this, 'MiTabla', {
