@@ -26,23 +26,19 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Build Lambda
-        working-directory: lambdas/hola-tu
-        run: |
-          npm install @aws-sdk/client-dynamodb @aws-sdk/util-dynamodb
-          npm run build
-      
-      - name: Install CDK deps
-        # Aquí es donde tienes tu package.json
+      - name: Install and Build Lambda
+        # Esta es la carpeta donde está tu package.json
         working-directory: ./lambdas/hola-tu
-        run: npm install
+        run: |
+          npm install
+          npm run build
 
       - name: CDK Bootstrap
-        # Aquí es donde me dijiste que está el cdk.json
+        # Donde está tu cdk.json
         working-directory: ./lambdas/hola-tu/dist
         run: npx cdk bootstrap
 
       - name: CDK Deploy
-        # Aquí también para que encuentre el cdk.json
+        # Donde está tu cdk.json
         working-directory: ./lambdas/hola-tu/dist
         run: npx cdk deploy --require-approval never
