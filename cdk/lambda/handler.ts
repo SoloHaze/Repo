@@ -1,17 +1,46 @@
+import * as fs from 'fs';
+import * as path from 'path'; // Módulo nativo de Node.js
 import { DynamoDBClient, ScanCommand } from "@aws-sdk/client-dynamodb";
 import { unmarshall } from "@aws-sdk/util-dynamodb";
-import * as fs from 'fs';
-import * as path from 'path';
 
 // Inicializamos el cliente fuera del handler para reutilizar conexiones
 const client = new DynamoDBClient({});
 
 export const handler = async (event: any) => {
-  const path = event.path;
+  // Usamos 'rutaActual' para evitar conflictos con el objeto 'path' importado arriba
+  const rutaActual = event.path;
   const tableName = process.env.TABLE_NAME;
 
-  // 1. RUTA RAÍZ: Servimos Swagger UI para que sea interactivo
-  if (path === "/" || path === "/prod" || path === "/prod/") {
+  // --- 1. RUTA /INDEX: Servimos tu página personalizada index.html ---
+  if (rutaActual.includes("/index")) {
+    try {
+      // Intentamos localizar el archivo index.html en la carpeta de ejecución
+      const htmlPath = path.join(__dirname, 'index.html');
+      
+      if (!fs.existsSync(htmlPath)) {
+        return {
+          statusCode: 404,
+          body: `Error: No encontré el archivo index.html en la ruta: ${htmlPath}`
+        };
+      }
+
+      const htmlContent = fs.readFileSync(htmlPath, 'utf8');
+
+      return {
+        statusCode: 200,
+        headers: { "Content-Type": "text/html" },
+        body: htmlContent,
+      };
+    } catch (error: any) {
+      return {
+        statusCode: 500,
+        body: `Error al intentar leer el archivo: ${error.message}`
+      };
+    }
+  }
+
+  // --- 2. RUTA RAÍZ (/): Servimos Swagger UI interactivo ---
+  if (rutaActual === "/" || rutaActual === "/prod" || rutaActual === "/prod/") {
     const swaggerHtml = `
       <!DOCTYPE html>
       <html lang="en">
@@ -31,7 +60,7 @@ export const handler = async (event: any) => {
                 openapi: "3.0.0",
                 info: { title: "Hola Tu API", version: "1.0.0", description: "Documentación interactiva de mi Lambda" },
                 paths: {
-                  "/prod/hola": {
+                  "/hola": {
                     get: {
                       summary: "Retorna el mensaje de bienvenida e items de DynamoDB",
                       responses: {
@@ -59,18 +88,16 @@ export const handler = async (event: any) => {
     };
   }
 
-  // 2. RUTA /HOLA: Lógica de negocio (Mensaje + DynamoDB)
-  if (path.includes("/hola")) {
+  // --- 3. RUTA /HOLA: Lógica de negocio (Mensaje + DynamoDB) ---
+  if (rutaActual.includes("/hola")) {
     let items: any[] = [];
 
-    // Solo intentamos leer de DynamoDB si la variable de entorno existe
     if (tableName) {
       try {
         const results = await client.send(new ScanCommand({ TableName: tableName }));
         items = results.Items ? results.Items.map((item) => unmarshall(item)) : [];
       } catch (error) {
         console.error("Error leyendo DynamoDB:", error);
-        // No bloqueamos la respuesta, enviamos items vacíos si falla la DB
       }
     }
 
@@ -78,48 +105,21 @@ export const handler = async (event: any) => {
       statusCode: 200,
       headers: { 
         "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*" // Importante para que Swagger pueda llamar a esta ruta
+        "Access-Control-Allow-Origin": "*" 
       },
       body: JSON.stringify({
         message: 'Hola Mundo! 🚀',
-        path_utilizado: path,
+        path_utilizado: rutaActual,
         items: items,
         timestamp: new Date().toISOString(),
       }),
     };
   }
-  // 2.5 Ruta INDEX
-  if (path.includes("/index")) {
-      try {
-        // __dirname es la carpeta donde vive el archivo JS ejecutándose en AWS
-        const htmlPath = path.join(__dirname, 'index.html');
-        
-        // Verificamos si existe. Si no existe, enviamos un mensaje claro
-        if (!fs.existsSync(htmlPath)) {
-          return {
-            statusCode: 404,
-            body: `Error: No encontré el archivo index.html en la ruta: ${htmlPath}`
-          };
-        }
 
-        const htmlContent = fs.readFileSync(htmlPath, 'utf8');
-
-        return {
-          statusCode: 200,
-          headers: { "Content-Type": "text/html" },
-          body: htmlContent,
-        };
-      } catch (error: any) {
-        return {
-          statusCode: 500,
-          body: `Error al intentar leer el archivo: ${error.message}`
-        };
-      }
-    }
-  // 3. RUTA NO ENCONTRADA
+  // --- 4. RUTA NO ENCONTRADA ---
   return {
     statusCode: 404,
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ error: "Ruta no encontrada" }),
+    body: JSON.stringify({ error: "Ruta no encontrada", ruta_solicitada: rutaActual }),
   };
 };
