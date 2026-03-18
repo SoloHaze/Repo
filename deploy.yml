@@ -33,16 +33,16 @@ jobs:
           npm run build
       
       - name: Install CDK deps
-        # Donde está tu package.json
+        # Aquí es donde tienes tu package.json
         working-directory: ./lambdas/hola-tu
         run: npm install
 
       - name: CDK Bootstrap
-        # Donde está tu cdk.json
+        # Aquí es donde me dijiste que está el cdk.json
         working-directory: ./lambdas/hola-tu/dist
         run: npx cdk bootstrap
 
       - name: CDK Deploy
-        # Donde está tu cdk.json
+        # Aquí también para que encuentre el cdk.json
         working-directory: ./lambdas/hola-tu/dist
         run: npx cdk deploy --require-approval never
