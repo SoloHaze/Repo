@@ -29,7 +29,7 @@ export const handler = async (event: any) => {
                 openapi: "3.0.0",
                 info: { title: "Hola Tu API", version: "1.0.0", description: "Documentación interactiva de mi Lambda" },
                 paths: {
-                  "prod/hola": {
+                  "/prod/hola": {
                     get: {
                       summary: "Retorna el mensaje de bienvenida e items de DynamoDB",
                       responses: {
