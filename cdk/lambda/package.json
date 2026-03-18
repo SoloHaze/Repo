@@ -2,7 +2,7 @@
   "name": "mi-proyecto-cdk",
   "version": "1.0.0",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && cp index.html dist/cdk/lambda/index.html",
     "cdk": "cdk",
     "deploy": "cdk deploy --require-approval never"
   },

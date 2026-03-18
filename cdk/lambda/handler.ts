@@ -1,5 +1,7 @@
 import { DynamoDBClient, ScanCommand } from "@aws-sdk/client-dynamodb";
 import { unmarshall } from "@aws-sdk/util-dynamodb";
+import * as fs from 'fs';
+import * as path from 'path';
 
 // Inicializamos el cliente fuera del handler para reutilizar conexiones
 const client = new DynamoDBClient({});
@@ -86,6 +88,26 @@ export const handler = async (event: any) => {
       }),
     };
   }
+  // 2.5 Ruta INDEX
+  if (path.includes("/index")) {
+      try {
+        // Leemos el archivo index.html que está en la misma carpeta que el JS generado
+        const htmlPath = path.join(__dirname, 'index.html');
+        const htmlContent = fs.readFileSync(htmlPath, 'utf8');
+
+        return {
+          statusCode: 200,
+          headers: { "Content-Type": "text/html" },
+          body: htmlContent,
+        };
+      } catch (error) {
+        console.error("Error leyendo el HTML:", error);
+        return {
+          statusCode: 500,
+          body: "Error interno: No se pudo cargar el archivo HTML.",
+        };
+      }
+    }
 
   // 3. RUTA NO ENCONTRADA
   return {

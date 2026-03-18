@@ -28,6 +28,7 @@ jobs:
         working-directory: ./cdk/lambda
         run: |
           npm install
+          npm install --save-dev @types/node
           # Creamos un link simbólico para que la carpeta lib vea los node_modules
           ln -s $(pwd)/node_modules ../../node_modules
           npm run build
