@@ -23,7 +23,7 @@ export class LambdaStack extends cdk.Stack {
       runtime: lambda.Runtime.NODEJS_20_X,
       handler: 'handler.handler',
       code: lambda.Code.fromAsset(
-        path.join(__dirname, '../lambdas/hola-tu/dist')
+        path.join(__dirname, '../cdk/lambda/dist')
       ),
       environment: {
         TABLE_NAME: tabla.tableName,
