@@ -28,6 +28,8 @@ jobs:
         working-directory: ./cdk/lambda
         run: |
           npm install
+          # Creamos un link simbólico para que la carpeta lib vea los node_modules
+          ln -s $(pwd)/node_modules ../../node_modules
           npm run build
           npx cdk bootstrap
           npx cdk deploy --require-approval never

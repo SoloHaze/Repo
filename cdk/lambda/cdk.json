@@ -1,5 +1,5 @@
 {
-  "app": "npx ts-node --prefer-ts-exts lambda.ts",
+  "app": "npx ts-node --project tsconfig.json --prefer-ts-exts lambda.ts",
   "context": {
     "@aws-cdk/core:stackRelativeExports": true
   }
