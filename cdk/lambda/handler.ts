@@ -91,8 +91,17 @@ export const handler = async (event: any) => {
   // 2.5 Ruta INDEX
   if (path.includes("/index")) {
       try {
-        // Leemos el archivo index.html que está en la misma carpeta que el JS generado
+        // __dirname es la carpeta donde vive el archivo JS ejecutándose en AWS
         const htmlPath = path.join(__dirname, 'index.html');
+        
+        // Verificamos si existe. Si no existe, enviamos un mensaje claro
+        if (!fs.existsSync(htmlPath)) {
+          return {
+            statusCode: 404,
+            body: `Error: No encontré el archivo index.html en la ruta: ${htmlPath}`
+          };
+        }
+
         const htmlContent = fs.readFileSync(htmlPath, 'utf8');
 
         return {
@@ -100,15 +109,13 @@ export const handler = async (event: any) => {
           headers: { "Content-Type": "text/html" },
           body: htmlContent,
         };
-      } catch (error) {
-        console.error("Error leyendo el HTML:", error);
+      } catch (error: any) {
         return {
           statusCode: 500,
-          body: "Error interno: No se pudo cargar el archivo HTML.",
+          body: `Error al intentar leer el archivo: ${error.message}`
         };
       }
     }
-
   // 3. RUTA NO ENCONTRADA
   return {
     statusCode: 404,

@@ -2,7 +2,8 @@
   "name": "mi-proyecto-cdk",
   "version": "1.0.0",
   "scripts": {
-    "build": "tsc && cp index.html dist/cdk/lambda/index.html",
+    "build": "tsc && cp index.html dist/cdk/lambda/",
+    "test": "echo \"Error: no test specified\" && exit 1",
     "cdk": "cdk",
     "deploy": "cdk deploy --require-approval never"
   },
