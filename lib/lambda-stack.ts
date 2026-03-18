@@ -8,28 +8,26 @@ import { Construct } from 'constructs';
 export class LambdaStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
-    
 
-    // Tabla DynamoDB
-    //const tabla = new dynamodb.Table(this, 'MiTabla', {
-    //  tableName: 'mi-tabla',
-    //  partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
-    //  billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
-    //  removalPolicy: cdk.RemovalPolicy.DESTROY,
-    //});
+    // Tabla DynamoDB (Comentada para evitar errores de build si no la usas)
+    /*
+    const tabla = new dynamodb.Table(this, 'MiTabla', {
+      tableName: 'mi-tabla',
+      partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+    });
+    */
 
     // Lambda
     const holaFn = new lambda.Function(this, 'HolaMundoFunction', {
       runtime: lambda.Runtime.NODEJS_20_X,
       handler: 'handler.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, '../cdk/lambda/dist')), // <--- Ruta actualizada
+      code: lambda.Code.fromAsset(path.join(__dirname, '../cdk/lambda/dist/cdk/lambda')),
       environment: {
-        TABLE_NAME: tabla.tableName,
+        // TABLE_NAME: tabla.tableName, // Comentado hasta que actives la tabla
       },
     });
-
-    // Permisos
-    tabla.grantReadData(holaFn);
 
     // API Gateway
     const api = new apigateway.RestApi(this, 'HolaMundoApi', {
@@ -40,14 +38,8 @@ export class LambdaStack extends cdk.Stack {
     const holaResource = api.root.addResource('hola');
     holaResource.addMethod('GET', new apigateway.LambdaIntegration(holaFn));
 
-    // Outputs
     new cdk.CfnOutput(this, 'ApiUrl', {
       value: `${api.url}hola`,
-      description: 'URL del endpoint',
-    });
-
-    new cdk.CfnOutput(this, 'LambdaArn', {
-      value: holaFn.functionArn,
     });
   }
 }
