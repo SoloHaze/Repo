@@ -63,15 +63,23 @@
         .carousel-container {
             position: relative;
             width: 100%;
-            max-width: 600px; /* Tamaño máximo del carrusel */
-            height: 400px; /* Altura del carrusel */
+            max-width: 800px; /* Aumentamos el ancho para que luzcan más */
+            height: 500px;    /* Aumentamos la altura */
             margin: 40px auto;
             overflow: hidden;
             border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            background-color: #000; /* Fondo negro para que si la foto es alta, los lados no se vean vacíos */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             border: 5px solid white;
         }
 
+        .carousel-slide img {
+            width: 100%;
+            height: 100%;
+            /* CAMBIO CLAVE: 'contain' muestra la imagen completa sin cortes */
+            object-fit: contain; 
+            flex-shrink: 0;
+        }
         .carousel-slide {
             display: flex;
             width: 100%;
@@ -79,12 +87,6 @@
             transition: transform 0.5s ease-in-out;
         }
 
-        .carousel-slide img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* La imagen se ajusta sin deformarse */
-            flex-shrink: 0;
-        }
 
         /* Botones del carrusel */
         .carousel-btn {
