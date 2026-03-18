@@ -31,15 +31,18 @@ jobs:
         run: |
           npm install @aws-sdk/client-dynamodb @aws-sdk/util-dynamodb
           npm run build
-
+      
       - name: Install CDK deps
-        working-directory: cdk/lambda
+        # Donde está tu package.json
+        working-directory: ./lambdas/hola-tu
         run: npm install
 
       - name: CDK Bootstrap
-        working-directory: cdk/lambda
+        # Donde está tu cdk.json
+        working-directory: ./lambdas/hola-tu/dist
         run: npx cdk bootstrap
 
       - name: CDK Deploy
-        working-directory: cdk/lambda
+        # Donde está tu cdk.json
+        working-directory: ./lambdas/hola-tu/dist
         run: npx cdk deploy --require-approval never
