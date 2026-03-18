@@ -26,18 +26,17 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Install and Build Lambda
+      - name: Build Lambda Logic
+        # Primero compilamos la función en su carpeta original
+        working-directory: ./lambdas/hola-tu
         run: |
-          cd lambdas/hola-tu
           npm install
           npm run build
 
-      - name: CDK Bootstrap
+      - name: Install CDK and Deploy
+        # Ahora entramos a la carpeta que GitHub espera
+        working-directory: ./cdk/lambda
         run: |
-          cd lambdas/hola-tu/dist
+          npm install
           npx cdk bootstrap
-
-      - name: CDK Deploy
-        run: |
-          cd lambdas/hola-tu/dist
           npx cdk deploy --require-approval never
