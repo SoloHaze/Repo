@@ -19,6 +19,9 @@ export class LambdaStack extends cdk.Stack {
     });
     */
 
+
+
+
     // Lambda
     const holaFn = new lambda.Function(this, 'HolaMundoFunction', {
       runtime: lambda.Runtime.NODEJS_20_X,
@@ -33,13 +36,17 @@ export class LambdaStack extends cdk.Stack {
     const api = new apigateway.RestApi(this, 'HolaMundoApi', {
       restApiName: 'hola-tu-api',
       description: 'API para Hola Mundo',
+      deployOptions: {
+        stageName: 'prod',
+      },
     });
 
+    // 2. La raíz (donde cargaremos Swagger UI)
+    api.root.addMethod('GET', new apigateway.LambdaIntegration(holaFn));
+
+    // 3. El recurso /hola (tu endpoint de datos)
     const holaResource = api.root.addResource('hola');
     holaResource.addMethod('GET', new apigateway.LambdaIntegration(holaFn));
 
-    new cdk.CfnOutput(this, 'ApiUrl', {
-      value: `${api.url}hola`,
-    });
   }
 }
