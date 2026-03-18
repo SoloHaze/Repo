@@ -27,18 +27,17 @@ jobs:
           aws-region: us-east-1
 
       - name: Install and Build Lambda
-        # Esta es la carpeta donde está tu package.json
-        working-directory: ./lambdas/hola-tu
         run: |
+          cd lambdas/hola-tu
           npm install
           npm run build
 
       - name: CDK Bootstrap
-        # Donde está tu cdk.json
-        working-directory: ./lambdas/hola-tu/dist
-        run: npx cdk bootstrap
+        run: |
+          cd lambdas/hola-tu/dist
+          npx cdk bootstrap
 
       - name: CDK Deploy
-        # Donde está tu cdk.json
-        working-directory: ./lambdas/hola-tu/dist
-        run: npx cdk deploy --require-approval never
+        run: |
+          cd lambdas/hola-tu/dist
+          npx cdk deploy --require-approval never
