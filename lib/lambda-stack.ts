@@ -22,9 +22,7 @@ export class LambdaStack extends cdk.Stack {
     const holaFn = new lambda.Function(this, 'HolaMundoFunction', {
       runtime: lambda.Runtime.NODEJS_20_X,
       handler: 'handler.handler',
-      code: lambda.Code.fromAsset(
-        path.join(__dirname, '../cdk/lambda/dist')
-      ),
+      code: lambda.Code.fromAsset(path.join(__dirname, '../cdk/lambda/dist')), // <--- Ruta actualizada
       environment: {
         TABLE_NAME: tabla.tableName,
       },

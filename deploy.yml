@@ -27,7 +27,7 @@ jobs:
           aws-region: us-east-1
 
       - name: Install, Build and Deploy
-        # Entramos a la carpeta "bendecida" por tu log de errores
+        # Esta es la UNICA ruta que GitHub Actions reconoce ahora
         working-directory: ./cdk/lambda
         run: |
           npm install
