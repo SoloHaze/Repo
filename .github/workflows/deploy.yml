@@ -26,20 +26,11 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Build Lambda
-        working-directory: lambdas/hola-tu
+      - name: Install, Build and Deploy
+        # Esta es la UNICA ruta que GitHub Actions reconoce ahora
+        working-directory: ./cdk/lambda
         run: |
           npm install
           npm run build
-
-      - name: Install CDK deps
-        working-directory: cdk/lambda
-        run: npm install
-
-      - name: CDK Bootstrap
-        working-directory: cdk/lambda
-        run: npx cdk bootstrap
-
-      - name: CDK Deploy
-        working-directory: cdk/lambda
-        run: npx cdk deploy --require-approval never
+          npx cdk bootstrap
+          npx cdk deploy --require-approval never
